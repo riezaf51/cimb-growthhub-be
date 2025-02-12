@@ -5,16 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use App\Helpers\ApiFormatter;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+
+        try {
+            $request->validate([
+                'username' => 'required',
+                'password' => 'required',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiFormatter::createApi(false, $e->errors(), null, 400);
+        }
 
         $user = User::where('username', $request->username)->first();
 
