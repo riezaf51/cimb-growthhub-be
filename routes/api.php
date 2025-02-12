@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TrainingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,8 @@ Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 Route::post('/register', [TraineeController::class, 'register']);
+
+Route::apiResource('/trainings', TrainingController::class);
 
 Route::fallback(function () {
     return ApiFormatter::createApi(false, 'Page not found', null, 404);
