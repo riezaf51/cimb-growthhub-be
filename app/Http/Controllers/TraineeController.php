@@ -16,17 +16,22 @@ class TraineeController extends Controller
 {
     public function register(Request $request)
     {
-       $validator = FacadesValidator::make($request->all(), [
-            'password' => 'required',
-            'roleId' => 'required',
-            'username' => 'required',
-            'nama' =>'required',
-            'tgl_lahir`' => 'required',
-            'pekerjaan' => 'required',
-            'perusahaan' => 'required',
-            'no_telepon' => 'required',
-            'email' => 'required'
-       ]);
+
+        try {
+            $validator = FacadesValidator::make($request->all(), [
+                'password' => 'required',
+                'roleId' => 'required',
+                'username' => 'required',
+                'nama' =>'required',
+                'tgl_lahir`' => 'required',
+                'pekerjaan' => 'required',
+                'perusahaan' => 'required',
+                'no_telepon' => 'required',
+                'email' => 'required'
+           ])->validate();
+        } catch (\Throwable $th) {
+            return ApiFormatter::createApi(true, 'Register Failed', $th->getMessage(), 400);
+        }
 
        $getRoleTrainee = Role::whereLike('name', 'Trainee')->first();
 
