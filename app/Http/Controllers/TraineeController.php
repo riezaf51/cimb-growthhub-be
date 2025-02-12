@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiFormatter;
+use App\Models\Profile;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
@@ -43,10 +46,7 @@ class TraineeController extends Controller
             'userId' => $user->id
         ]);
 
-        return response()->json([
-            'message' => 'Register Success',
-            'data' => $trainee
-        ]);
+        return ApiFormatter::createApi(true, 'Register Success', $trainee, 200);
 
     }
 
@@ -68,13 +68,10 @@ class TraineeController extends Controller
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Password not match'
-            ],);
+            ],500);
         }
 
-        return response()->json([
-            'message' => 'Login Success',
-            'data' =>  $user
-        ]);
+        return ApiFormatter::createApi(true,'Login Succes', $user, 200);
     }
 
 
