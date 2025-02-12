@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Helpers\ApiFormatter;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -36,6 +38,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
+            try {
+                $request->validate([
+                    'username' => 'required',
+                    'password' => 'required|min:8',
+                    'nama' => 'required',
+                    'tgl_lahir' => 'required|date',
+                    'pekerjaan' => 'required',
+                    'perusahaan' => 'required',
+                    'no_telepon' => 'required',
+                    'email' => 'required|email',
+                    'role_id' => 'required',
+                ]);
+            } catch (ValidationException $e) {
+                return ApiFormatter::createApi(false, $e->errors(), null, 400);
+            }
+
             $request->validate([
                 'username' => 'required',
                 'password' => 'required|min:8',
@@ -81,7 +99,7 @@ class UserController extends Controller
             $profile->save();
 
             return ApiFormatter::createApi(true, 'User created', ['id' => $user->id], 201);
-        } catch (\Throwable $e) {
+        } catch (QueryException $e) {
             return ApiFormatter::createApi(false, 'Failed to create user', null, 500);
         }
     }
@@ -116,18 +134,21 @@ class UserController extends Controller
             if (!Str::isUuid($id)) {
                 return ApiFormatter::createApi(false, 'Invalid user ID', null, 400);
             }
-
-            $request->validate([
-                'username' => 'required',
-                'password' => 'required|min:8',
-                'nama' => 'required',
-                'tgl_lahir' => 'required|date',
-                'pekerjaan' => 'required',
-                'perusahaan' => 'required',
-                'no_telepon' => 'required',
-                'email' => 'required|email',
-                'role_id' => 'required',
-            ]);
+            try {
+                $request->validate([
+                    'username' => 'required',
+                    'password' => 'required|min:8',
+                    'nama' => 'required',
+                    'tgl_lahir' => 'required|date',
+                    'pekerjaan' => 'required',
+                    'perusahaan' => 'required',
+                    'no_telepon' => 'required',
+                    'email' => 'required|email',
+                    'role_id' => 'required',
+                ]);
+            } catch (ValidationException $e) {
+                return ApiFormatter::createApi(false, $e->errors(), null, 400);
+            }
 
             $user = User::find($id);
 
@@ -170,7 +191,7 @@ class UserController extends Controller
             $profile->save();
 
             return ApiFormatter::createApi(true, 'User updated', ['id' => $user->id], 200);
-        } catch (\Throwable $e) {
+        } catch (QueryException $e) {
             return ApiFormatter::createApi(false, 'Failed to update user', null, 500);
         }
     }
@@ -194,7 +215,7 @@ class UserController extends Controller
             $user->delete();
 
             return ApiFormatter::createApi(true, 'User deleted', null, 200);
-        } catch (\Throwable $e) {
+        } catch (QueryException $e) {
             return ApiFormatter::createApi(false, 'Failed to delete user', null, 500);
         }
     }

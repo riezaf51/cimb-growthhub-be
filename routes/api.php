@@ -11,7 +11,7 @@ Route::get('/', function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::delete('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/user-by-token', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 Route::get('/users', [UserController::class, 'index']);
