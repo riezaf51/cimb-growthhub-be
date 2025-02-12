@@ -113,6 +113,10 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            if (!Str::isUuid($id)) {
+                return ApiFormatter::createApi(false, 'Invalid user ID', null, 400);
+            }
+
             $request->validate([
                 'username' => 'required',
                 'password' => 'required|min:8',
@@ -177,6 +181,10 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
+            if (!Str::isUuid($id)) {
+                return ApiFormatter::createApi(false, 'Invalid user ID', null, 400);
+            }
+
             $user = User::find($id);
 
             if (!$user) {
