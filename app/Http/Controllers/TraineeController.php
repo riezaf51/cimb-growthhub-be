@@ -50,39 +50,4 @@ class TraineeController extends Controller
         return ApiFormatter::createApi(true, 'Register Success', $trainee, 200);
 
     }
-
-    public function login(Request $request)
-    {
-        $validator = FacadesValidator::make($request->all(), [
-            'username' => 'required',
-            'password' => 'required'
-        ]);
-
-        $user = User::where('username', $request->username)->first();
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found'
-            ],404);
-        }
-
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Password not match'
-            ],500);
-        }
-
-        $getRoleTrainee = Role::where('id', $user->roleId)->first();
-
-        $dataUser = new stdClass;
-        $dataUser->id = $user->id;
-        $dataUser->username = $user->username;
-        $dataUser->role = $getRoleTrainee->name;
-
-        return ApiFormatter::createApi(true,'Login Succes', $dataUser, 200);
-    }
-
-
-
-
 }
