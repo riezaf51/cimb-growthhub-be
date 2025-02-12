@@ -10,6 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
+use stdClass;
 
 class TraineeController extends Controller
 {
@@ -71,7 +72,14 @@ class TraineeController extends Controller
             ],500);
         }
 
-        return ApiFormatter::createApi(true,'Login Succes', $user, 200);
+        $getRoleTrainee = Role::where('id', $user->roleId)->first();
+
+        $dataUser = new stdClass;
+        $dataUser->id = $user->id;
+        $dataUser->username = $user->username;
+        $dataUser->role = $getRoleTrainee->name;
+
+        return ApiFormatter::createApi(true,'Login Succes', $dataUser, 200);
     }
 
 
