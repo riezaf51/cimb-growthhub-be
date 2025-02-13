@@ -134,6 +134,9 @@ class UserController extends Controller
             if (!Str::isUuid($id)) {
                 return ApiFormatter::createApi(false, 'Invalid user ID', null, 400);
             }
+            if ($id !== $request->user()->id && !$request->user()->hasRole('admin')) {
+                return ApiFormatter::createApi(false, 'Forbidden', null, 403);
+            }
             try {
                 $request->validate([
                     'username' => 'required',
@@ -158,7 +161,6 @@ class UserController extends Controller
 
             $user->username = $request->input('username');
             $user->password = $request->input('password');
-            $user->role_id = $request->input('role_id');
 
             $username_exists = User::where('username', $user->username)
                 ->where('id', '!=', $id)
@@ -168,10 +170,14 @@ class UserController extends Controller
                 return ApiFormatter::createApi(false, 'Username already exists', null, 409);
             }
 
-            $role_exists = Role::where('id', $user->role_id)->exists();
+            if ($request->user()->hasRole('admin')) {
+                $user->role_id = $request->input('role_id');
 
-            if (!$role_exists) {
-                return ApiFormatter::createApi(false, 'Role not found', null, 404);
+                $role_exists = Role::where('id', $user->role_id)->exists();
+
+                if (!$role_exists) {
+                    return ApiFormatter::createApi(false, 'Role not found', null, 404);
+                }
             }
 
             $profile = Profile::where('user_id', $id)->first();

@@ -8,7 +8,7 @@ use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use App\Helpers\ApiFormatter;
 
 class TrainingController extends Controller
 {
@@ -16,10 +16,10 @@ class TrainingController extends Controller
     {
         $trainings = Training::get();
 
-        if($trainings->count() > 0) {
-            return TrainingResource::collection($trainings);
-        }else {
-            return response()->json(['message' => 'No Training Found'], 200);
+        if ($trainings->count() > 0) {
+            return ApiFormatter::createApi(true, 'Data retrieved successfully', TrainingResource::collection($trainings));
+        } else {
+            return ApiFormatter::createApi(false, 'No Training Found', null, 404);
         }
     }
 
@@ -28,20 +28,16 @@ class TrainingController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'nama_trainer' => 'required|string|max:255',
-            'kapasitas' => 'required|integer',
+            'kapasitas' => 'required|integer|min:1',
             'tipe' => 'required|in:private,public',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date_format:Y-m-d H:i:s',
-            'durasi' => 'required|integer',
+            'durasi' => 'required|integer|min:1',
             'status' => 'required|in:on progress,done'
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json([
-                'message' => 'All fields are required',
-                'errors' => $validator->messages(),
-            ], 422);
+        if ($validator->fails()) {
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
         }
 
         $training = Training::create([
@@ -56,36 +52,29 @@ class TrainingController extends Controller
             'status' => $request->status,
         ]);
 
-        return response()->json([
-            'message' => 'Training created successfully',
-            'data' => new TrainingResource($training)
-        ], 200);
+        return ApiFormatter::createApi(true, 'Training created successfully', ['id' => $training->id], 201);
     }
 
     public function show(Training $training)
     {
-        return new TrainingResource($training);
+        return ApiFormatter::createApi(true, 'Data retrieved successfully', new TrainingResource($training));
     }
 
     public function update(Request $request, Training $training)
     {
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'nama_trainer' => 'required|string|max:255',
-            'kapasitas' => 'required|integer',
+            'kapasitas' => 'required|integer|min:1',
             'tipe' => 'required|in:private,public',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date_format:Y-m-d H:i:s',
-            'durasi' => 'required|integer',
+            'durasi' => 'required|integer|min:1',
             'status' => 'required|in:on progress,done'
         ]);
 
-        if ($validator->fails())
-        {
-            return response()->json([
-                'message' => 'All fields are required',
-                'errors' => $validator->messages(),
-            ], 422);
+        if ($validator->fails()) {
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
         }
 
         $training->update([
@@ -99,17 +88,14 @@ class TrainingController extends Controller
             'status' => $request->status,
         ]);
 
-        return response()->json([
-            'message' => 'Training Updated successfully',
-            'data' => new TrainingResource($training)
-        ], 200);
+        return ApiFormatter::createApi(true, 'Training updated successfully', ['id' => $training->id], 200);
     }
 
     public function destroy(Training $training)
     {
-        $training->delete([
-            'message' => 'Training Deleted Successfully',
-        ], 200);
+        $training->delete();
+
+        return ApiFormatter::createApi(true, 'Training deleted successfully', null);
     }
 
     public function enroll(Request $request)
@@ -119,10 +105,13 @@ class TrainingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Invalid data provided',
-                'errors' => $validator->messages(),
-            ], 422);
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
+        }
+
+        $training = Training::find($request->training_id);
+
+        if ($training->approvedAttendees()->count() >= $training->kapasitas) {
+            return ApiFormatter::createApi(false, 'This training is already full.', null, 409);
         }
 
         $user = auth()->user();
@@ -132,9 +121,7 @@ class TrainingController extends Controller
             ->first();
 
         if ($existingEnrollment) {
-            return response()->json([
-                'message' => 'You have already enrolled in this training.',
-            ], 409);
+            return ApiFormatter::createApi(false, 'You have already enrolled in this training.', null, 409);
         }
 
         $newEnrollment = new Pendaftaran();
@@ -144,10 +131,7 @@ class TrainingController extends Controller
         $newEnrollment->tgl_daftar = now();
         $newEnrollment->save();
 
-        return response()->json([
-            'message' => 'Enrollment request submitted successfully!',
-            'enrollment' => $newEnrollment,
-        ], 201);
+        return ApiFormatter::createApi(true, 'Enrollment request submitted successfully!', ['enrollment' => $newEnrollment], 201);
     }
 
     public function cancelEnrollment(Request $request)
@@ -157,10 +141,7 @@ class TrainingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Invalid data provided',
-                'errors' => $validator->messages(),
-            ], 422);
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
         }
 
         $user = auth()->user();
@@ -170,15 +151,104 @@ class TrainingController extends Controller
             ->first();
 
         if (!$existingEnrollment) {
-            return response()->json([
-                'message' => 'You are not enrolled in this training.',
-            ], 404); 
+            return ApiFormatter::createApi(false, 'You are not enrolled in this training.', null, 404);
         }
 
         $existingEnrollment->delete();
 
-        return response()->json([
-            'message' => 'Enrollment canceled successfully!',
-        ], 200);
+        return ApiFormatter::createApi(true, 'Enrollment canceled successfully!', null);
+    }
+
+    public function enrollmentRequests(string $id)
+    {
+        $training = Training::find($id);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        foreach ($training->attendees as $request) {
+            $request->user->profile;
+            $request->user->role;
+        }
+
+        if ($training->attendees->count() > 0) {
+            return ApiFormatter::createApi(true, 'Data retrieved successfully', $training);
+        } else {
+            return ApiFormatter::createApi(false, 'No enrollment requests found.', null, 404);
+        }
+    }
+
+    public function enrollmentRequestDetail(string $trainingId, string $id)
+    {
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $enrollment = Pendaftaran::find($id);
+
+        if (!$enrollment) {
+            return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
+        }
+
+        $enrollment->user->profile;
+        $enrollment->user->role;
+        $enrollment->training;
+
+        return ApiFormatter::createApi(true, 'Data retrieved successfully', $enrollment);
+    }
+
+    public function enrollmentRequestApproval(Request $request, string $trainingId, string $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:approved,rejected,pending',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
+        }
+
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $enrollment = Pendaftaran::find($id);
+
+        if (!$enrollment) {
+            return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
+        }
+
+        $enrollment->status = $request->status;
+        $enrollment->save();
+
+        return ApiFormatter::createApi(true, 'Enrollment request status updated successfully!', ['id' => $enrollment->id]);
+    }
+
+    public function enrollmentRequestsBulkReject(string $trainingId)
+    {
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $pendingEnrollments = Pendaftaran::where('training_id', $trainingId)
+            ->where('status', 'pending')
+            ->get();
+
+        if ($pendingEnrollments->count() == 0) {
+            return ApiFormatter::createApi(false, 'No pending enrollment requests found.', null, 404);
+        }
+
+        foreach ($pendingEnrollments as $enrollment) {
+            $enrollment->status = 'rejected';
+            $enrollment->save();
+        }
+
+        return ApiFormatter::createApi(true, 'All pending enrollment requests have been rejected.', null);
     }
 }
