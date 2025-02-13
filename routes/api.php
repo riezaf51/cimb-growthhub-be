@@ -16,14 +16,13 @@ Route::get('/', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [TraineeController::class, 'register']);
 
-Route::apiResource('/trainings', TrainingController::class)->only(['index', 'show']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/logout', [AuthController::class, 'logout']);
     Route::get('/user-by-token', [AuthController::class, 'me']);
 
     Route::get('/roles', [RoleController::class, 'index']);
 
+    Route::get('/trainings/enrolled', [TrainingController::class, 'enrollmentRequestByUser']);
     Route::post('/trainings/enroll', [TrainingController::class, 'enroll']);
     Route::post('/trainings/cancel-enrollment', [TrainingController::class, 'cancelEnrollment']);
 
@@ -43,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestApproval']);
     });
 });
+
+Route::apiResource('/trainings', TrainingController::class)->only(['index', 'show']);
 
 Route::fallback(function () {
     return ApiFormatter::createApi(false, 'URL not found', null, 404);
