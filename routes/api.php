@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Helpers\ApiFormatter;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TraineeController;
 
 Route::get('/', function () {
@@ -21,8 +22,8 @@ Route::post('/users', [UserController::class, 'store']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
 Route::post('/register', [TraineeController::class, 'register']);
+Route::get('/roles', [RoleController::class, 'index']);
 
 Route::apiResource('/trainings', TrainingController::class);
 
