@@ -30,4 +30,9 @@ class Training extends Model
     protected $casts = [
         'tanggal' => 'datetime:Y-m-d H:i:s',
     ];
+
+    public function approvedAttendees()
+    {
+        return $this->hasMany(Pendaftaran::class)->where('status', 'approved');
+    }
 }

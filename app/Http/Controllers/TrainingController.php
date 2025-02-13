@@ -108,6 +108,12 @@ class TrainingController extends Controller
             return ApiFormatter::createApi(false, $validator->messages(), null, 400);
         }
 
+        $training = Training::find($request->training_id);
+
+        if ($training->approvedAttendees()->count() >= $training->kapasitas) {
+            return ApiFormatter::createApi(false, 'This training is already full.', null, 409);
+        }
+
         $user = auth()->user();
 
         // Check if the user has already enrolled in this training
