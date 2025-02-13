@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role;
 use App\Models\Profile;
+use PhpParser\Node\Expr\Cast\Bool_;
 
 class User extends Authenticatable
 {
@@ -56,6 +57,12 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function hasRole(string $role): bool
+    {
+        $rolesArray = explode('|', $role);
+        return in_array($this->role->name, $rolesArray);
     }
 
     public function profile()
