@@ -36,6 +36,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware(RoleMiddleware::class . ':admin');
 
         Route::apiResource('/trainings', TrainingController::class)->only(['store', 'update', 'destroy']);
+
+        Route::get('/trainings/{id}/requests', [TrainingController::class, 'enrollmentRequests']);
+        Route::get('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestDetail']);
+        Route::put('/trainings/{trainingId}/requests/reject-pending', [TrainingController::class, 'enrollmentRequestsBulkReject']);
+        Route::put('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestApproval']);
     });
 });
 

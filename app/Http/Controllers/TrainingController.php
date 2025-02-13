@@ -162,4 +162,95 @@ class TrainingController extends Controller
 
         return ApiFormatter::createApi(true, 'Enrollment canceled successfully!', null);
     }
+
+    public function enrollmentRequests(string $id)
+    {
+        $training = Training::find($id);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        foreach ($training->attendees as $request) {
+            $request->user->profile;
+        }
+
+        if ($training->attendees->count() > 0) {
+            return ApiFormatter::createApi(true, 'Data retrieved successfully', $training);
+        } else {
+            return ApiFormatter::createApi(false, 'No enrollment requests found.', null, 404);
+        }
+    }
+
+    public function enrollmentRequestDetail(string $trainingId, string $id)
+    {
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $enrollment = Pendaftaran::find($id);
+
+        if (!$enrollment) {
+            return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
+        }
+
+        $enrollment->user->profile;
+        $enrollment->training;
+
+        return ApiFormatter::createApi(true, 'Data retrieved successfully', $enrollment);
+    }
+
+    public function enrollmentRequestApproval(Request $request, string $trainingId, string $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:approved,rejected,pending',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiFormatter::createApi(false, $validator->messages(), null, 400);
+        }
+
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $enrollment = Pendaftaran::find($id);
+
+        if (!$enrollment) {
+            return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
+        }
+
+        $enrollment->status = $request->status;
+        $enrollment->save();
+
+        return ApiFormatter::createApi(true, 'Enrollment request status updated successfully!', ['id' => $enrollment->id]);
+    }
+
+    public function enrollmentRequestsBulkReject(string $trainingId)
+    {
+        $training = Training::find($trainingId);
+
+        if (!$training) {
+            return ApiFormatter::createApi(false, 'Training not found.', null, 404);
+        }
+
+        $pendingEnrollments = Pendaftaran::where('training_id', $trainingId)
+            ->where('status', 'pending')
+            ->get();
+
+        if ($pendingEnrollments->count() == 0) {
+            return ApiFormatter::createApi(false, 'No pending enrollment requests found.', null, 404);
+        }
+
+        foreach ($pendingEnrollments as $enrollment) {
+            $enrollment->status = 'rejected';
+            $enrollment->save();
+        }
+
+        return ApiFormatter::createApi(true, 'All pending enrollment requests have been rejected.', null);
+    }
 }

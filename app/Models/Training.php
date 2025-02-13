@@ -31,6 +31,11 @@ class Training extends Model
         'tanggal' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public function attendees()
+    {
+        return $this->hasMany(Pendaftaran::class);
+    }
+
     public function approvedAttendees()
     {
         return $this->hasMany(Pendaftaran::class)->where('status', 'approved');
