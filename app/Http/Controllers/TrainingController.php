@@ -240,4 +240,21 @@ class TrainingController extends Controller
 
         return ApiFormatter::createApi(true, 'All pending enrollment requests have been rejected.', null);
     }
+
+    public function enrollmentRequestByUser(Request $request)
+    {
+        $enrollments = Pendaftaran::where('user_id', $request->user()->id)
+            ->whereIn('status', ['pending', 'approved'])
+            ->get();
+
+        foreach ($enrollments as $enrollment) {
+            $enrollment->training;
+        }
+
+        if ($enrollments->count() > 0) {
+            return ApiFormatter::createApi(true, 'Data retrieved successfully', $enrollments);
+        } else {
+            return ApiFormatter::createApi(false, 'No enrollment requests found.', null, 404);
+        }
+    }
 }

@@ -19,6 +19,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000001',
             'user_id' => '00000000-0000-0000-0000-000000000002',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -26,6 +27,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000002',
             'user_id' => '00000000-0000-0000-0000-000000000006',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -33,6 +35,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000003',
             'user_id' => '00000000-0000-0000-0000-000000000007',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -40,6 +43,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000004',
             'user_id' => '00000000-0000-0000-0000-000000000008',
             'status' => 'rejected',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -47,6 +51,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000005',
             'user_id' => '00000000-0000-0000-0000-000000000001',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -54,6 +59,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000006',
             'user_id' => '00000000-0000-0000-0000-000000000002',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -61,6 +67,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000007',
             'user_id' => '00000000-0000-0000-0000-000000000003',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -68,6 +75,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000008',
             'user_id' => '00000000-0000-0000-0000-000000000004',
             'status' => 'rejected',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -75,6 +83,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000001',
             'user_id' => '00000000-0000-0000-0000-000000000004',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -82,6 +91,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000002',
             'user_id' => '00000000-0000-0000-0000-000000000007',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -89,6 +99,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000003',
             'user_id' => '00000000-0000-0000-0000-000000000008',
             'status' => 'rejected',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -96,6 +107,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000004',
             'user_id' => '00000000-0000-0000-0000-000000000005',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -103,6 +115,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000005',
             'user_id' => '00000000-0000-0000-0000-000000000002',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -110,6 +123,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000006',
             'user_id' => '00000000-0000-0000-0000-000000000003',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -117,6 +131,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000007',
             'user_id' => '00000000-0000-0000-0000-000000000004',
             'status' => 'rejected',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -124,6 +139,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000008',
             'user_id' => '00000000-0000-0000-0000-000000000001',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -131,6 +147,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000001',
             'user_id' => '00000000-0000-0000-0000-000000000006',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -138,6 +155,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000001',
             'user_id' => '00000000-0000-0000-0000-000000000008',
             'status' => 'approved',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
 
         Pendaftaran::create([
@@ -145,6 +163,7 @@ class PendaftaranSeeder extends Seeder
             'training_id' => '00000000-0000-0000-0000-000000000002',
             'user_id' => '00000000-0000-0000-0000-000000000007',
             'status' => 'pending',
+            'tgl_daftar' => '2021-01-01 08:00:00',
         ]);
     }
 }

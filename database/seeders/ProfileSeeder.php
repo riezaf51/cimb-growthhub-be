@@ -13,6 +13,50 @@ class ProfileSeeder extends Seeder
      */
     public function run(): void
     {
+         Profile::create([
+            'id' => '00000000-0000-0000-0000-000000000001',
+            'user_id' => '00000000-0000-0000-0000-000000000001',
+            'nama' => 'Luthfi',
+            'tgl_lahir' => '1999-01-01',
+            'pekerjaan' => 'Software Engineer',
+            'perusahaan' => 'PT. Luthfi',
+            'no_telepon' => '081234567890',
+            'email' => 'luthfi@email.com',
+        ]);
+
+        Profile::create([
+            'id' => '00000000-0000-0000-0000-000000000002',
+            'user_id' => '00000000-0000-0000-0000-000000000002',
+            'nama' => 'Haikal',
+            'tgl_lahir' => '1999-01-01',
+            'pekerjaan' => 'Software Engineer',
+            'perusahaan' => 'PT. Haikal',
+            'no_telepon' => '081234567890',
+            'email' => 'haikal@email.com',
+        ]);
+
+        Profile::create([
+            'id' => '00000000-0000-0000-0000-000000000003',
+            'user_id' => '00000000-0000-0000-0000-000000000003',
+            'nama' => 'Rizky',
+            'tgl_lahir' => '1999-01-01',
+            'pekerjaan' => 'Software Engineer',
+            'perusahaan' => 'PT. Rizky',
+            'no_telepon' => '081234567890',
+            'email' => 'rizky@email.com',
+        ]);
+
+        Profile::create([
+            'id' => '00000000-0000-0000-0000-000000000004',
+            'user_id' => '00000000-0000-0000-0000-000000000004',
+            'nama' => 'Rizal',
+            'tgl_lahir' => '1999-01-01',
+            'pekerjaan' => 'Software Engineer',
+            'perusahaan' => 'PT. Rizal',
+            'no_telepon' => '081234567890',
+            'email' => 'rizal@email.com',
+        ]);
+
         Profile::create([
             'id' => '00000000-0000-0000-0000-000000000005',
             'user_id' => '00000000-0000-0000-0000-000000000005',
@@ -55,50 +99,6 @@ class ProfileSeeder extends Seeder
             'perusahaan' => 'PT. Dewi',
             'no_telepon' => '081234567894',
             'email' => 'dewi@email.com',
-        ]);
-
-        Profile::create([
-            'id' => '00000000-0000-0000-0000-000000000001',
-            'user_id' => '00000000-0000-0000-0000-000000000001',
-            'nama' => 'Luthfi',
-            'tgl_lahir' => '1999-01-01',
-            'pekerjaan' => 'Software Engineer',
-            'perusahaan' => 'PT. Luthfi',
-            'no_telepon' => '081234567890',
-            'email' => 'luthfi@email.com',
-        ]);
-
-        Profile::create([
-            'id' => '00000000-0000-0000-0000-000000000003',
-            'user_id' => '00000000-0000-0000-0000-000000000003',
-            'nama' => 'Rizky',
-            'tgl_lahir' => '1999-01-01',
-            'pekerjaan' => 'Software Engineer',
-            'perusahaan' => 'PT. Rizky',
-            'no_telepon' => '081234567890',
-            'email' => 'rizky@email.com',
-        ]);
-
-        Profile::create([
-            'id' => '00000000-0000-0000-0000-000000000004',
-            'user_id' => '00000000-0000-0000-0000-000000000004',
-            'nama' => 'Rizal',
-            'tgl_lahir' => '1999-01-01',
-            'pekerjaan' => 'Software Engineer',
-            'perusahaan' => 'PT. Rizal',
-            'no_telepon' => '081234567890',
-            'email' => 'rizal@email.com',
-        ]);
-
-        Profile::create([
-            'id' => '00000000-0000-0000-0000-000000000002',
-            'user_id' => '00000000-0000-0000-0000-000000000002',
-            'nama' => 'Haikal',
-            'tgl_lahir' => '1999-01-01',
-            'pekerjaan' => 'Software Engineer',
-            'perusahaan' => 'PT. Haikal',
-            'no_telepon' => '081234567890',
-            'email' => 'haikal@email.com',
         ]);
 
     }
