@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/trainings/enrolled', [TrainingController::class, 'enrollmentRequestByUser']);
     Route::post('/trainings/enroll', [TrainingController::class, 'enroll']);
     Route::post('/trainings/cancel-enrollment', [TrainingController::class, 'cancelEnrollment']);
+    Route::get('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestDetail']);
 
     // CMS Only Routes
     Route::middleware(RoleMiddleware::class . ':admin|hr')->group(function () {
@@ -37,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('/trainings', TrainingController::class)->only(['store', 'update', 'destroy']);
 
         Route::get('/trainings/{id}/requests', [TrainingController::class, 'enrollmentRequests']);
-        Route::get('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestDetail']);
         Route::put('/trainings/{trainingId}/requests/reject-pending', [TrainingController::class, 'enrollmentRequestsBulkReject']);
         Route::put('/trainings/{trainingId}/requests/{id}', [TrainingController::class, 'enrollmentRequestApproval']);
     });
