@@ -14,16 +14,20 @@ Route::get('/', function () {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::delete('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('/user-by-token', [AuthController::class, 'me'])->middleware('auth:sanctum');
-
-Route::get('/users', [UserController::class, 'index']);
-Route::post('/users', [UserController::class, 'store']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::put('/users/{id}', [UserController::class, 'update']);
-Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::post('/register', [TraineeController::class, 'register']);
-Route::get('/roles', [RoleController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/logout', [AuthController::class, 'logout']);
+    Route::get('/user-by-token', [AuthController::class, 'me']);
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+    Route::get('/roles', [RoleController::class, 'index']);
+});
 
 Route::apiResource('/trainings', TrainingController::class);
 
