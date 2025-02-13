@@ -170,14 +170,14 @@ class UserController extends Controller
                 return ApiFormatter::createApi(false, 'Username already exists', null, 409);
             }
 
-            $role_exists = Role::where('id', $user->role_id)->exists();
-
-            if (!$role_exists) {
-                return ApiFormatter::createApi(false, 'Role not found', null, 404);
-            }
-
             if ($request->user()->hasRole('admin')) {
                 $user->role_id = $request->input('role_id');
+
+                $role_exists = Role::where('id', $user->role_id)->exists();
+
+                if (!$role_exists) {
+                    return ApiFormatter::createApi(false, 'Role not found', null, 404);
+                }
             }
 
             $profile = Profile::where('user_id', $id)->first();
