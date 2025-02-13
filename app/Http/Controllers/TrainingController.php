@@ -127,7 +127,6 @@ class TrainingController extends Controller
 
         $user = auth()->user();
 
-        // Check if the user has already enrolled in this training
         $existingEnrollment = Pendaftaran::where('user_id', $user->id)
             ->where('training_id', $request->training_id)
             ->first();
@@ -135,10 +134,9 @@ class TrainingController extends Controller
         if ($existingEnrollment) {
             return response()->json([
                 'message' => 'You have already enrolled in this training.',
-            ], 409); // 409 Conflict status code
+            ], 409);
         }
 
-        // Create a new enrollment record with status 'pending'
         $newEnrollment = new Pendaftaran();
         $newEnrollment->user_id = $user->id;
         $newEnrollment->training_id = $request->training_id;
@@ -167,7 +165,6 @@ class TrainingController extends Controller
 
         $user = auth()->user();
 
-        // Check if the user has already enrolled in this training
         $existingEnrollment = Pendaftaran::where('user_id', $user->id)
             ->where('training_id', $request->training_id)
             ->first();
@@ -175,10 +172,9 @@ class TrainingController extends Controller
         if (!$existingEnrollment) {
             return response()->json([
                 'message' => 'You are not enrolled in this training.',
-            ], 404); // 404 Not Found status code
+            ], 404); 
         }
 
-        // Delete the enrollment record
         $existingEnrollment->delete();
 
         return response()->json([
