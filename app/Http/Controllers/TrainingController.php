@@ -173,6 +173,7 @@ class TrainingController extends Controller
 
         foreach ($training->attendees as $request) {
             $request->user->profile;
+            $request->user->role;
         }
 
         if ($training->attendees->count() > 0) {
@@ -197,6 +198,7 @@ class TrainingController extends Controller
         }
 
         $enrollment->user->profile;
+        $enrollment->user->role;
         $enrollment->training;
 
         return ApiFormatter::createApi(true, 'Data retrieved successfully', $enrollment);
