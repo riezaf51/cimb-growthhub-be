@@ -12,6 +12,7 @@ class Profile extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'user_id',
         'nama',
         'tgl_lahir',

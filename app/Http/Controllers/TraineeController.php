@@ -6,11 +6,10 @@ use App\Helpers\ApiFormatter;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator as FacadesValidator;
-use stdClass;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class TraineeController extends Controller
 {
@@ -18,41 +17,46 @@ class TraineeController extends Controller
     {
 
         try {
-            $validator = FacadesValidator::make($request->all(), [
-                'password' => 'required',
-                'roleId' => 'required',
+            Validator::make($request->all(), [
+                'password' => 'required|min:8',
                 'username' => 'required',
-                'nama' =>'required',
-                'tgl_lahir`' => 'required',
+                'nama' => 'required',
+                'tgl_lahir' => 'required|date',
                 'pekerjaan' => 'required',
                 'perusahaan' => 'required',
                 'no_telepon' => 'required',
                 'email' => 'required'
-           ])->validate();
-        } catch (\Throwable $th) {
-            return ApiFormatter::createApi(true, 'Register Failed', $th->getMessage(), 400);
+            ])->validate();
+        } catch (ValidationException $e) {
+            return ApiFormatter::createApi(false, $e->errors(), null, 400);
         }
 
-       $getRoleTrainee = Role::whereLike('name', 'Trainee')->first();
+        $username_exists = User::where('username', $request->username)->exists();
 
+        if ($username_exists) {
+            return ApiFormatter::createApi(false, 'Username already exists', null, 409);
+        }
 
-       $user = User::create([
+        $getRoleTrainee = Role::whereLike('name', 'trainee', false)->first();
+
+        $user = User::create([
+            'id' => Str::uuid(),
             'username' => $request->username,
-            'roleId' => $getRoleTrainee->id,
+            'role_id' => $getRoleTrainee->id,
             'password' => bcrypt($request->password),
-       ]);
+        ]);
 
-        $trainee = Profile::create([
+        Profile::create([
+            'id' => Str::uuid(),
             'nama' => $request->nama,
             'tgl_lahir' => $request->tgl_lahir,
             'pekerjaan' => $request->pekerjaan,
             'perusahaan' => $request->perusahaan,
             'no_telepon' => $request->no_telepon,
             'email' => $request->email,
-            'userId' => $user->id
+            'user_id' => $user->id
         ]);
 
-        return ApiFormatter::createApi(true, 'Register Success', $trainee, 200);
-
+        return ApiFormatter::createApi(true, 'Register Success', ['id' => $user->id], 200);
     }
 }
