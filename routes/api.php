@@ -35,6 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::apiResource('/trainings', TrainingController::class);
 
+Route::post('/trainings/enroll', [TrainingController::class, 'enroll'])->middleware('auth:sanctum');
+
+Route::post('/trainings/cancel-enrollment', [TrainingController::class, 'cancelEnrollment'])->middleware('auth:sanctum');
+
 Route::fallback(function () {
     return ApiFormatter::createApi(false, 'Page not found', null, 404);
 });
