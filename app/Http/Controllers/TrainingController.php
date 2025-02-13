@@ -17,7 +17,7 @@ class TrainingController extends Controller
         if($trainings->count() > 0) {
             return TrainingResource::collection($trainings);
         }else {
-            return response()->json(['message' => 'No training found'], 200);
+            return response()->json(['message' => 'No Training Found'], 200);
         }
     }
 
@@ -42,7 +42,7 @@ class TrainingController extends Controller
             ], 422);
         }
 
-        $product = Training::create([
+        $training = Training::create([
 
             'nama' => $request->nama,
             'nama_trainer' => $request->nama_trainer,
@@ -55,23 +55,58 @@ class TrainingController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Product created successfully',
-            'data' => new TrainingResource($product)
+            'message' => 'Training created successfully',
+            'data' => new TrainingResource($training)
         ], 200);
     }
 
-    public function show()
+    public function show(Training $training)
     {
-
+        return new TrainingResource($training);
     }
 
-    public function update()
+    public function update(Request $request, Training $training)
     {
+         $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'nama_trainer' => 'required|string|max:255',
+            'kapasitas' => 'required|integer',
+            'tipe' => 'required|in:private,public',
+            'deskripsi' => 'required|string',
+            'tanggal' => 'required|date_format:Y-m-d H:i:s',
+            'durasi' => 'required|integer',
+            'status' => 'required|in:on progress,done'
+        ]);
 
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'All fields are required',
+                'errors' => $validator->messages(),
+            ], 422);
+        }
+
+        $training->update([
+            'nama' => $request->nama,
+            'nama_trainer' => $request->nama_trainer,
+            'kapasitas' => $request->kapasitas,
+            'tipe' => $request->tipe,
+            'deskripsi' => $request->deskripsi,
+            'tanggal' => $request->tanggal,
+            'durasi' => $request->durasi,
+            'status' => $request->status,
+        ]);
+
+        return response()->json([
+            'message' => 'Training Updated successfully',
+            'data' => new TrainingResource($training)
+        ], 200);
     }
 
-    public function destroy()
+    public function destroy(Training $training)
     {
-
+        $training->delete([
+            'message' => 'Training Deleted Successfully',
+        ], 200);
     }
 }
