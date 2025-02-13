@@ -28,11 +28,11 @@ class TrainingController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'nama_trainer' => 'required|string|max:255',
-            'kapasitas' => 'required|integer',
+            'kapasitas' => 'required|integer|min:1',
             'tipe' => 'required|in:private,public',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date_format:Y-m-d H:i:s',
-            'durasi' => 'required|integer',
+            'durasi' => 'required|integer|min:1',
             'status' => 'required|in:on progress,done'
         ]);
 
@@ -65,11 +65,11 @@ class TrainingController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'nama_trainer' => 'required|string|max:255',
-            'kapasitas' => 'required|integer',
+            'kapasitas' => 'required|integer|min:1',
             'tipe' => 'required|in:private,public',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date_format:Y-m-d H:i:s',
-            'durasi' => 'required|integer',
+            'durasi' => 'required|integer|min:1',
             'status' => 'required|in:on progress,done'
         ]);
 
