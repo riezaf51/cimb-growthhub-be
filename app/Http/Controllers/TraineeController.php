@@ -57,6 +57,6 @@ class TraineeController extends Controller
             'user_id' => $user->id
         ]);
 
-        return ApiFormatter::createApi(true, 'Register Success', ['id' => $user->id], 200);
+        return ApiFormatter::createApi(true, 'Register Success', ['id' => $user->id], 201);
     }
 }
