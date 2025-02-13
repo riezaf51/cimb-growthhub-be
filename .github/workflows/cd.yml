@@ -1,0 +1,73 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Connect to EC2
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/cimb-growthhub-be
+
+      - name: Pull Latest Code
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/cimb-growthhub-be
+            git pull origin main
+
+      - name: Install Dependencies
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/cimb-growthhub-be
+            /home/ubuntu/.config/herd-lite/bin/composer install --no-dev --optimize-autoloader
+
+      - name: Run Migrations
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/cimb-growthhub-be
+            php artisan migrate --force
+
+      - name: Clear and Cache Configurations
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/cimb-growthhub-be
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+      - name: Restart Services
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo systemctl restart php8.3-fpm
+            sudo systemctl restart nginx
+
