@@ -116,7 +116,6 @@ class TrainingController extends Controller
 
         $user = auth()->user();
 
-        // Check if the user has already enrolled in this training
         $existingEnrollment = Pendaftaran::where('user_id', $user->id)
             ->where('training_id', $request->training_id)
             ->first();
@@ -125,7 +124,6 @@ class TrainingController extends Controller
             return ApiFormatter::createApi(false, 'You have already enrolled in this training.', null, 409);
         }
 
-        // Create a new enrollment record with status 'pending'
         $newEnrollment = new Pendaftaran();
         $newEnrollment->user_id = $user->id;
         $newEnrollment->training_id = $request->training_id;
@@ -148,7 +146,6 @@ class TrainingController extends Controller
 
         $user = auth()->user();
 
-        // Check if the user has already enrolled in this training
         $existingEnrollment = Pendaftaran::where('user_id', $user->id)
             ->where('training_id', $request->training_id)
             ->first();
@@ -157,7 +154,6 @@ class TrainingController extends Controller
             return ApiFormatter::createApi(false, 'You are not enrolled in this training.', null, 404);
         }
 
-        // Delete the enrollment record
         $existingEnrollment->delete();
 
         return ApiFormatter::createApi(true, 'Enrollment canceled successfully!', null);
@@ -165,22 +161,17 @@ class TrainingController extends Controller
 
     public function enrollmentRequests(string $id)
     {
-        $training = Training::find($id);
+        $training = Training::with('attendees.user.profile', 'attendees.user.role')->find($id);
 
         if (!$training) {
             return ApiFormatter::createApi(false, 'Training not found.', null, 404);
         }
 
-        foreach ($training->attendees as $request) {
-            $request->user->profile;
-            $request->user->role;
-        }
-
-        if ($training->attendees->count() > 0) {
-            return ApiFormatter::createApi(true, 'Data retrieved successfully', $training);
-        } else {
+        if ($training->attendees->isEmpty()) {
             return ApiFormatter::createApi(false, 'No enrollment requests found.', null, 404);
         }
+
+        return ApiFormatter::createApi(true, 'Data retrieved successfully', $training);
     }
 
     public function enrollmentRequestDetail(string $trainingId, string $id)
@@ -191,15 +182,11 @@ class TrainingController extends Controller
             return ApiFormatter::createApi(false, 'Training not found.', null, 404);
         }
 
-        $enrollment = Pendaftaran::find($id);
+        $enrollment = Pendaftaran::with(['user.profile', 'user.role', 'training'])->find($id);
 
         if (!$enrollment) {
             return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
         }
-
-        $enrollment->user->profile;
-        $enrollment->user->role;
-        $enrollment->training;
 
         return ApiFormatter::createApi(true, 'Data retrieved successfully', $enrollment);
     }
@@ -215,13 +202,11 @@ class TrainingController extends Controller
         }
 
         $training = Training::find($trainingId);
-
         if (!$training) {
             return ApiFormatter::createApi(false, 'Training not found.', null, 404);
         }
 
         $enrollment = Pendaftaran::find($id);
-
         if (!$enrollment) {
             return ApiFormatter::createApi(false, 'Enrollment request not found.', null, 404);
         }
