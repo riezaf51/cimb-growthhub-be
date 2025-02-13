@@ -9,7 +9,14 @@ class Training extends Model
 {
     use HasFactory;
 
+    protected $table = 'trainings';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
+        'id',
         'nama',
         'nama_trainer',
         'kapasitas',
@@ -18,5 +25,9 @@ class Training extends Model
         'tanggal',
         'durasi',
         'status',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'datetime:Y-m-d H:i:s',
     ];
 }

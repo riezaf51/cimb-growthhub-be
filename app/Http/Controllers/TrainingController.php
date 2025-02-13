@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\TrainingResource;
+use App\Models\Pendaftaran;
 use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 
 class TrainingController extends Controller
@@ -43,7 +45,7 @@ class TrainingController extends Controller
         }
 
         $training = Training::create([
-
+            'id' => Str::uuid(),
             'nama' => $request->nama,
             'nama_trainer' => $request->nama_trainer,
             'kapasitas' => $request->kapasitas,
@@ -107,6 +109,80 @@ class TrainingController extends Controller
     {
         $training->delete([
             'message' => 'Training Deleted Successfully',
+        ], 200);
+    }
+
+    public function enroll(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'training_id' => 'required|exists:trainings,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid data provided',
+                'errors' => $validator->messages(),
+            ], 422);
+        }
+
+        $user = auth()->user();
+
+        // Check if the user has already enrolled in this training
+        $existingEnrollment = Pendaftaran::where('user_id', $user->id)
+            ->where('training_id', $request->training_id)
+            ->first();
+
+        if ($existingEnrollment) {
+            return response()->json([
+                'message' => 'You have already enrolled in this training.',
+            ], 409); // 409 Conflict status code
+        }
+
+        // Create a new enrollment record with status 'pending'
+        $newEnrollment = new Pendaftaran();
+        $newEnrollment->user_id = $user->id;
+        $newEnrollment->training_id = $request->training_id;
+        $newEnrollment->status = 'pending';
+        $newEnrollment->tgl_daftar = now();
+        $newEnrollment->save();
+
+        return response()->json([
+            'message' => 'Enrollment request submitted successfully!',
+            'enrollment' => $newEnrollment,
+        ], 201);
+    }
+
+    public function cancelEnrollment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'training_id' => 'required|exists:trainings,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid data provided',
+                'errors' => $validator->messages(),
+            ], 422);
+        }
+
+        $user = auth()->user();
+
+        // Check if the user has already enrolled in this training
+        $existingEnrollment = Pendaftaran::where('user_id', $user->id)
+            ->where('training_id', $request->training_id)
+            ->first();
+
+        if (!$existingEnrollment) {
+            return response()->json([
+                'message' => 'You are not enrolled in this training.',
+            ], 404); // 404 Not Found status code
+        }
+
+        // Delete the enrollment record
+        $existingEnrollment->delete();
+
+        return response()->json([
+            'message' => 'Enrollment canceled successfully!',
         ], 200);
     }
 }
